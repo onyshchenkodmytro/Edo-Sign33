@@ -27,10 +27,12 @@
     <Folder Include="wwwroot\storage\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\EdoAuthServer\EdoAuthServer.csproj" />
-      <ExcludeAssets>runtime;contentfiles;native;build;buildTransitive</ExcludeAssets>
-  </ItemGroup>
+<ItemGroup>
+  <ProjectReference Include="..\EdoAuthServer\EdoAuthServer.csproj">
+    <ExcludeAssets>runtime;contentfiles;native;build;buildTransitive</ExcludeAssets>
+  </ProjectReference>
+</ItemGroup>
+
 
 
 
