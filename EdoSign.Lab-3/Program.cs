@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(options =>
 .AddOpenIdConnect("oidc", options =>
 {
     // === Îñíîâí³ ïàðàìåòðè OpenID Connect ===
-    options.Authority = "https://unfeeding-josue-unpedagogic.ngrok-free.dev"; // URL EdoAuthServer
+    options.Authority = "https://localhost:7090"; // URL EdoAuthServer
     options.ClientId = "mvc";
     options.ClientSecret = "secret";
     options.ResponseType = "code";
