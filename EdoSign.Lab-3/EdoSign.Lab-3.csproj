@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EdoAuthServer\EdoAuthServer.csproj" />
+      <ExcludeAssets>runtime;contentfiles;native;build;buildTransitive</ExcludeAssets>
   </ItemGroup>
 
 
