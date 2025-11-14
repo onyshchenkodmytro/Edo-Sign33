@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
-  config.vm.define "edosign3" do |edosign|
+  config.vm.define "edosign33" do |edosign|
     edosign.vm.box = "bento/ubuntu-22.04"
-    edosign.vm.hostname = "edosign3-ubuntu"
+    edosign.vm.hostname = "edosign33-ubuntu"
 
     # 🔹 ОДИН спільний namespace: edosign.vm.*
     edosign.vm.network "forwarded_port", guest: 7090, host: 7090, auto_correct: true
@@ -18,11 +18,11 @@ Vagrant.configure("2") do |config|
       apt-get update -y
       apt-get install -y dotnet-sdk-9.0
 
-      echo "=== Клонування репозиторію Edo-Sign3 ==="
-      su - vagrant -c "rm -rf ~/Edo-Sign3 && git clone https://github.com/onyshchenkodmytro/Edo-Sign3 ~/Edo-Sign3"
+      echo "=== Клонування репозиторію Edo-Sign33 ==="
+      su - vagrant -c "rm -rf ~/Edo-Sign33 && git clone https://github.com/onyshchenkodmytro/Edo-Sign33 ~/Edo-Sign33"
 
       echo "=== Виправлення прав доступу ==="
-      chmod -R 777 /home/vagrant/Edo-Sign3
+      chmod -R 777 /home/vagrant/Edo-Sign33
 
       echo "=== Налаштування NuGet джерел ==="
       mkdir -p /home/vagrant/.nuget/NuGet
@@ -40,13 +40,13 @@ Vagrant.configure("2") do |config|
 CFG
 
       echo "=== Побудова і запуск EdoSign.Lab-3 ==="
-      cd "/home/vagrant/Edo-Sign3/EdoSign.Lab-3"
+      cd "/home/vagrant/Edo-Sign33/EdoSign.Lab-3"
       dotnet restore
       dotnet build -c Release
       dotnet publish -c Release -o /app
 
       echo "=== Запуск веб-застосунку на http://0.0.0.0:7275 ==="
-      nohup dotnet /app/EdoSign.Lab-3.dll --urls=http://0.0.0.0:7275 > /var/log/edosign3.log 2>&1 &
+      nohup dotnet /app/EdoSign.Lab-3.dll --urls=http://0.0.0.0:7275 > /var/log/edosign33.log 2>&1 &
       sleep 5
       echo " Веб-застосунок запущено! Відкрий у браузері: http://localhost:7275"
     SHELL
