@@ -47,9 +47,9 @@ public static class Config
             ClientSecrets = { new Secret("secret".Sha256()) },
 
             // 🚨 Перевір порти (повинні збігатися з твоїм MVC-проєктом)
-            RedirectUris =           { "https://localhost:2202/signin-oidc" },
-            PostLogoutRedirectUris = { "https://localhost:2202/signout-callback-oidc" },
-            FrontChannelLogoutUri =  "https://localhost:2202/signout-oidc",
+            RedirectUris =           { "https://localhost:7275/signin-oidc" },
+            PostLogoutRedirectUris = { "https://localhost:7275/signout-callback-oidc" },
+            FrontChannelLogoutUri =  "https://localhost:7275/signout-oidc",
 
             // Scopes, які клієнт може запитувати
             AllowedScopes = { "openid", "profile", "email", "custom_profile", "edolab.api" },
