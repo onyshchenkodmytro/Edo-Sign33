@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
     edosign.vm.box = "bento/ubuntu-22.04"
     edosign.vm.hostname = "edosign33-ubuntu"
 
-    # 🔹 ОДИН спільний namespace: edosign.vm.*
+    # Проброс портів
     edosign.vm.network "forwarded_port", guest: 7090, host: 7090, auto_correct: true
     edosign.vm.network "forwarded_port", guest: 7275, host: 7275, auto_correct: true
 
@@ -21,34 +21,33 @@ Vagrant.configure("2") do |config|
       echo "=== Клонування репозиторію Edo-Sign33 ==="
       su - vagrant -c "rm -rf ~/Edo-Sign33 && git clone https://github.com/onyshchenkodmytro/Edo-Sign33 ~/Edo-Sign33"
 
-      echo "=== Виправлення прав доступу ==="
-      chmod -R 777 /home/vagrant/Edo-Sign33
+      echo "=== Копіювання коректного NuGet.Config ==="
+      su - vagrant -c "mkdir -p ~/.nuget/NuGet"
+      cp /vagrant/NuGet.Config /home/vagrant/.nuget/NuGet/NuGet.Config
+      chown vagrant:vagrant /home/vagrant/.nuget/NuGet/NuGet.Config
 
-      echo "=== Налаштування NuGet джерел ==="
-      mkdir -p /home/vagrant/.nuget/NuGet
-      cat > /home/vagrant/.nuget/NuGet/NuGet.Config <<'CFG'
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <packageSources>
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-    <add key="baget" value="http://192.168.56.10:5555/v3/index.json" />
-  </packageSources>
-  <config>
-    <add key="allowInsecureConnections" value="true" />
-  </config>
-</configuration>
-CFG
+      echo "=== Restore ==="
+      su - vagrant -c "dotnet restore --no-dependencies ~/Edo-Sign33/EdoAuthServer/EdoAuthServer.csproj"
+      su - vagrant -c "dotnet restore --no-dependencies ~/Edo-Sign33/EdoSign.Lab-3/EdoSign.Lab-3.csproj"
 
-      echo "=== Побудова і запуск EdoSign.Lab-3 ==="
-      cd "/home/vagrant/Edo-Sign33/EdoSign.Lab-3"
-      dotnet restore
-      dotnet build -c Release
-      dotnet publish -c Release -o /app
 
-      echo "=== Запуск веб-застосунку на http://0.0.0.0:7275 ==="
-      nohup dotnet /app/EdoSign.Lab-3.dll --urls=http://0.0.0.0:7275 > /var/log/edosign33.log 2>&1 &
-      sleep 5
-      echo " Веб-застосунок запущено! Відкрий у браузері: http://localhost:7275"
+      echo "=== Publish EdoAuthServer ==="
+      su - vagrant -c "dotnet publish ~/Edo-Sign33/EdoAuthServer/EdoAuthServer.csproj -c Release -o ~/auth"
+
+      echo "=== Publish EdoSign.Lab-3 ==="
+      su - vagrant -c "dotnet publish ~/Edo-Sign33/EdoSign.Lab-3/EdoSign.Lab-3.csproj -c Release -o ~/main"
+
+      echo "=== Запуск EdoAuthServer (порт 7090) ==="
+      su - vagrant -c "nohup dotnet ~/auth/EdoAuthServer.dll --urls=http://0.0.0.0:7090 > ~/auth.log 2>&1 &"
+
+      echo "=== Запуск EdoSign.Lab-3 (порт 7275) ==="
+      su - vagrant -c "nohup dotnet ~/main/EdoSign.Lab-3.dll --urls=http://0.0.0.0:7275 > ~/main.log 2>&1 &"
+
+      echo "==========================================================================="
+      echo "=== ГОТОВО! ==="
+      echo "=== Сервер аутентифікації: http://localhost:7090 ==="
+      echo "=== Основний застосунок:   http://localhost:7275 ==="
+      echo "==========================================================================="
     SHELL
   end
 end
